@@ -1,0 +1,42 @@
+version: '3.9'
+
+services:
+  ms_dyssomnia:
+    container_name: ms_dyssomnia
+    build: .
+    ports:
+    - "127.0.0.1:5000:5000"
+    volumes:
+    - ./:/app
+    environment:
+    - FLASK_DEBUG=1
+    depends_on:
+    - ms_dyssomnia_db
+    networks:
+    - NetworkDSS
+
+  ms_dyssomnia_db:
+    container_name: dyssomnia_db
+    image: postgres
+    ports:
+    - ${DB_PORT}:${DB_PORT}
+    volumes:
+    - dyssomniaDbVolume:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_PORT: ${DB_PORT}
+    command: -p ${DB_PORT}
+    networks:
+    - NetworkDSS
+
+
+volumes:
+  dyssomniaDbVolume:
+    driver: local
+
+
+networks:
+  NetworkDSS:
+    driver: "bridge"
