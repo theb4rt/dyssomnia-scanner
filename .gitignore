@@ -141,4 +141,5 @@ cython_debug/
 ms/api_nmap/output_files/*
 !ms/api_nmap/output_files/.gitkeep
 .idea/
-.migrations/
+migrations/
+migrations/*

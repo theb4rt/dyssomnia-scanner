@@ -10,7 +10,7 @@ from flask_restful import Api, Resource
 from ms import app
 
 
-# from ms.api_nmap.service.scan_single_ip import ScanSingleIp
+# from ms.api_nmap.controllers.scan_single_ip import ScanSingleIp
 
 
 

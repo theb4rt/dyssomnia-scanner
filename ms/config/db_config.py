@@ -12,5 +12,3 @@ db_config = {
     'SQLALCHEMY_TRACK_MODIFICATIONS': False,
     'SQLALCHEMY_ECHO': SQLALCHEMY_ECHO  # True or False to enable/disable print queries in console
 }
-print('b4rt')
-print(db_config)
