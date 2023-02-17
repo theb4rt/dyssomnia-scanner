@@ -4,6 +4,6 @@ Created on 2/15/22
 @author: b4rt
 @mail: root.b4rt@gmail.com
 """
-from .routes import api_bp
+
 
 
