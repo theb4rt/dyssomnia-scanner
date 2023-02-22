@@ -143,3 +143,5 @@ ms/api_nmap/output_files/*
 .idea/
 migrations/
 migrations/*
+.ssh/*
+!.ssh/.gitkeep
