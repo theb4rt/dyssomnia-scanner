@@ -5,7 +5,7 @@ from cryptography.hazmat.primitives import serialization
 import os
 
 
-class JwtHelper():
+class JwtHelper:
     def __init__(self, algorithms='RS256',
                  token_lifetime=43200,
                  refresh_token_lifetime=86400,
@@ -42,7 +42,7 @@ class JwtHelper():
         payload = jwt.decode(token, self.load_public_key(), algorithms=self.algorithms)
         return payload
 
-    def get_tokens(self, payload)-> dict:
+    def get_tokens(self, payload) -> dict:
         token = self.encode(payload, self.token_lifetime)
         refresh_token = self.encode(payload, self.refresh_token_lifetime)
         return {
@@ -50,7 +50,7 @@ class JwtHelper():
             'refresh_token': refresh_token,
         }
 
-    def check(self, token: str) -> bool|None:
+    def check(self, token: str) -> bool | None:
         try:
             payload = self.decode(token)
             return epoch_now() <= payload['exp']
