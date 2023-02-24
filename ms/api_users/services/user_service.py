@@ -59,6 +59,8 @@ class UserService(BaseService):
         if not status:
             return response_error(data=result, code=400)
         user = self.user_repo.find_user_by_username(user_data["username"])
+        if user is None:
+            return response_error(message="Invalid username or password", code=400)
         if not self._is_correct_password(user_data["password"], user.password):
             return response_error(message="Invalid username or password", code=400)
 
