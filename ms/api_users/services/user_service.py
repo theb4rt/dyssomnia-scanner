@@ -11,7 +11,8 @@ from ..schema.login_schema import LoginSchema, RegisterSchema
 from ms.helpers.response import response_error, response_ok
 from ms.helpers.schema_validator import is_valid
 from ms.services.service import BaseService
-from ..serializers import RegisterSerializer
+from ..serializers import RegisterSerializer, LoginSerializer
+from ...helpers.jwt_config import JwtHelper
 
 
 class UserService(BaseService):
@@ -58,15 +59,27 @@ class UserService(BaseService):
         if not status:
             return response_error(data=result, code=400)
         user = self.user_repo.find_user_by_username(user_data["username"])
-
         if not self._is_correct_password(user_data["password"], user.password):
             return response_error(message="Invalid username or password", code=400)
 
-        # return response_ok(data={"token": user.token}, message="User successfully logged in", code=200)
-        return response_ok(message='User successfully logged in', code=200)
+        user_data = self._set_payload(user)
+
+        return response_ok(message='User successfully logged in', code=200, data=user_data)
 
     def _hash_password(self, password):
         return bcrypt.hashpw(password.encode(), bcrypt.gensalt())
 
     def _is_correct_password(self, password, hashed_password):
         return bcrypt.hashpw(password.encode(), hashed_password) == hashed_password
+
+    def _set_payload(self, user):
+        jwt_helper = JwtHelper()
+
+        return jwt_helper.get_tokens(
+            payload={
+                'user': user.username,
+                'roles': ['admin' if user.is_admin else 'client'],
+                'sub': str(user.id)
+
+            }
+        )

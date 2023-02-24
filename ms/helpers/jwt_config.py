@@ -34,6 +34,7 @@ class JwtHelper:
 
     def encode(self, payload, lifetime) -> str:
         payload['exp'] = epoch_now() + lifetime
+        payload['iat'] = epoch_now()
         encoded = jwt.encode(payload, self.load_private_key(), algorithm=self.algorithms)
         return encoded
 
