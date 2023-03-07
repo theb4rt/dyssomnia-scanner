@@ -9,3 +9,12 @@ class RegisterSerializer(Serializer):
         "email": str,
         "is_active": bool,
     }
+
+
+class LoginSerializer(Serializer):
+    response = {
+        "id": str,
+        "username": str,
+        "email": str,
+        "is_active": bool,
+    }

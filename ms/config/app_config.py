@@ -1,4 +1,8 @@
 import os
+from ms import app
+
+
+
 
 app_config = {
     'APP_NAME': os.getenv('APP_NAME', 'app'),
@@ -9,4 +13,9 @@ app_config = {
     "S3_BUCKET_NAME": os.getenv('S3_BUCKET_NAME', None),
     "S3_KEY": os.getenv('S3_KEY', None),
     "S3_SECRET": os.getenv('S3_SECRET', None),
+    "JWT_ALGORITHM": os.getenv('JWT_ALGORITHM', 'RS256'),
+    "APP_ROOT": os.path.dirname(app.instance_path),
+    "JWT_SECRET_KEY": os.path.join(os.path.dirname(app.instance_path), '.ssh', 'jwtRSA256-private.pem'),
+    "JWT_PUBLIC_KEY": os.path.join(os.path.dirname(app.instance_path), '.ssh', 'jwtRSA256-public.pem'),
 }
+
