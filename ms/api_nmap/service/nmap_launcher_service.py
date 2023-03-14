@@ -67,6 +67,7 @@ class NmapLauncherService(Resource):
         if not status:
             return response_error(data=result, code=400)
         self.scan_manager.ip = data.get('ip')
+        self.scan_manager.ports = "".join(str(data.get('port_list'))[1:-1].split())
         try:
             scanned = self.scan_manager.scan_scripts_ports()
             return response_ok(data=scanned, code=200)

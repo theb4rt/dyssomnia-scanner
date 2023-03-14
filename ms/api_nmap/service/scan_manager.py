@@ -49,7 +49,7 @@ class ScanManager:
         return self.open_ports_services
 
     def scan_scripts_ports(self):
-        self.nmap_command = ["nmap", self.ip, "-Pn", self.type_scan, "-sC", self.timing, "-p", self.ports, "-oA",
+        self.nmap_command = ["nmap", self.ip, "-Pn", self.type_scan, "-sV", "-sC", self.timing, "-p", self.ports, "-oA",
                              self.output_name]
         self.launch_nmap()
         return self.open_ports_services
