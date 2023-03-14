@@ -19,3 +19,50 @@ class ScanByPortsController(Resource):
             result = {'message': message, 'data': data}, code
 
         return result
+
+
+class BasicScanController(Resource):
+    def __init__(self, nmap_launcher_service: NmapLauncherService):
+        self.nmap_launcher_service = nmap_launcher_service
+
+    def post(self):
+        request_data = request.get_json(silent=True)
+        status, message, data, code = self.nmap_launcher_service.basic_scan(data=request_data).values()
+
+        if status:
+            result = {'data': data, 'message': message}, code
+        else:
+            result = {'message': message, 'data': data}, code
+
+        return result
+
+
+class AllPortsScanController(Resource):
+    def __init__(self, nmap_launcher_service: NmapLauncherService):
+        self.nmap_launcher_service = nmap_launcher_service
+
+    def post(self):
+        request_data = request.get_json(silent=True)
+        status, message, data, code = self.nmap_launcher_service.all_ports_scan(data=request_data).values()
+
+        if status:
+            result = {'data': data, 'message': message}, code
+        else:
+            result = {'message': message, 'data': data}, code
+        return result
+
+
+class PortsScriptsController(Resource):
+    def __init__(self, nmap_launcher_service: NmapLauncherService):
+        self.nmap_launcher_service = nmap_launcher_service
+
+    def post(self):
+        request_data = request.get_json(silent=True)
+        status, message, data, code = self.nmap_launcher_service.scan_ports_and_scripts(data=request_data).values()
+
+        if status:
+            result = {'data': data, 'message': message}, code
+        else:
+            result = {'message': message, 'data': data}, code
+
+        return result

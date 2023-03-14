@@ -20,7 +20,6 @@ class NmapLauncherService(Resource):
         self.scan_manager = ScanManager()
 
     def scan_by_port_list(self, data) -> dict:
-        """ scan by port list """
         status, result = self._is_valid_nmap_data(data)
 
         if not status:
@@ -31,6 +30,45 @@ class NmapLauncherService(Resource):
 
         try:
             scanned = self.scan_manager.scan_by_ports()
+            return response_ok(data=scanned, code=200)
+
+        except Exception as e:
+            error_logger.error("error: %s", str(e))
+            return response_error(message='There was an error', code=500)
+
+    def basic_scan(self, data) -> dict:
+        status, result = self._is_valid_nmap_data(data)
+        if not status:
+            return response_error(data=result, code=400)
+        self.scan_manager.ip = data.get('ip')
+        try:
+            scanned = self.scan_manager.basic_scan()
+            return response_ok(data=scanned, code=200)
+
+        except Exception as e:
+            error_logger.error("error: %s", str(e))
+            return response_error(message='There was an error', code=500)
+
+    def all_ports_scan(self, data) -> dict:
+        status, result = self._is_valid_nmap_data(data)
+        if not status:
+            return response_error(data=result, code=400)
+        self.scan_manager.ip = data.get('ip')
+        try:
+            scanned = self.scan_manager.scan_all_ports()
+            return response_ok(data=scanned, code=200)
+
+        except Exception as e:
+            error_logger.error("error: %s", str(e))
+            return response_error(message='There was an error', code=500)
+
+    def scan_ports_and_scripts(self, data) -> dict:
+        status, result = self._is_valid_nmap_data(data)
+        if not status:
+            return response_error(data=result, code=400)
+        self.scan_manager.ip = data.get('ip')
+        try:
+            scanned = self.scan_manager.scan_scripts_ports()
             return response_ok(data=scanned, code=200)
 
         except Exception as e:
