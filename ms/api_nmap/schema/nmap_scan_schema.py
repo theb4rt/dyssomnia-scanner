@@ -1,21 +1,14 @@
-"""
-Created on 4/2/22
-@author: b4rt
-@mail: root.b4rt@gmail.com
-"""
+import re
 
-from flask_marshmallow import Schema
-from marshmallow.fields import Nested, Str, Dict, List
-from ms.api_nmap.schema.nmap_profile_schema import NmapProfileSchema
+from flask_marshmallow import Marshmallow
+from marshmallow import fields, validates
+from marshmallow.validate import Length
+
+from ms import app
+
+ma = Marshmallow(app)
 
 
-class NmapScanSchema(Schema):
-    class Meta:
-        fields = ["nmap_profile", "scan_result", "scan_protocol", 'open_ports_tcp', 'open_ports_udp', 'scan_arguments']
-
-    scan_result = Dict()
-    scan_protocol = Str()
-    open_ports_tcp = List()
-    open_ports_udp = List()
-    scan_arguments = Dict()
-    nmap_profile = Nested(NmapProfileSchema, many=True)
+class NmapScanSchema(ma.Schema):
+    ip = fields.IPv4(required=True, allow_none=False)
+    port_list = fields.List(fields.Int(), required=False, allow_none=False)
