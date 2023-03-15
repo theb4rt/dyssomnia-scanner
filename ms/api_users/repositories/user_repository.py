@@ -17,7 +17,7 @@ class UserRepository(Repository):
         return None
 
     def find_user(self, id):
-        q = self._model.query.filter_by(user_id=id)
+        q = self._model.query.filter_by(id=id)
         users = q.all()
         return users if len(users) > 0 else False
 
@@ -39,3 +39,9 @@ class UserRepository(Repository):
         if user is not None:
             return False
         return True
+
+    def check_admin(self, id):
+        user = self.find(id=id)
+        if user is not None:
+            return user.is_admin
+        return False
