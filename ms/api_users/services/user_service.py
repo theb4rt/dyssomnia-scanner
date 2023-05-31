@@ -45,9 +45,7 @@ class UserService(BaseService):
         try:
 
             user = self.user_repo.add(data=result)
-            print('b444444444444rtFINAL')
-            print('b444444444444rtFINAL')
-            print('b444444444444rtFINAL')
+
             if user is None:
                 return self.response_error(message="Username is taken", code=400)
             serializer = RegisterSerializer(user)

@@ -57,12 +57,7 @@ class NiktoService(BaseService):
         status, result = self._is_valid_data
         if not status:
             return self.response_error(data=result, code=400)
-        self._error_logger.info(f"Processing data for {self.data['host']}")
-        #self._error_logger.info(result)
-
-        # print('b4rrrrrrrt1')
-        # print(json.dumps(result))
-        # print('b4rrrrrrrt2')
+        self._info_logger.info(f"Processing data for {self.data['host']}")
 
         scan_details = result['niktoscan']['scandetails']
         niktoscan_general = result['niktoscan']['dollar']
