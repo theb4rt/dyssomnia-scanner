@@ -12,7 +12,7 @@ class NiktoController(Resource):
         data = request.get_json(silent=True)
         self.nikto_service.data = data
 
-        status, message, data, code = self.nikto_service.req_nikto().values()
+        status, message, data, code = self.nikto_service.process_data().values()
 
         if status:
             result = {'data': data, 'message': message}, code

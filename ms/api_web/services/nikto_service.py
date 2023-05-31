@@ -46,3 +46,4 @@ class NiktoService(BaseService):
 
         schema = NiktoSchema()
         return is_valid(schema, self.data)
+

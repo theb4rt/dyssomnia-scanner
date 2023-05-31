@@ -1,68 +1,86 @@
 import abc
+
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import or_
 from ms.db import db, Model
 from ms.helpers import time
+from typing import Any, Dict, Optional
 
 
 class Repository(abc.ABC):
-    def __init__(self) -> None:
-        self._model = self.get_model()
+    def __init__(self, db: SQLAlchemy) -> None:
         self._db = db
+        self._model = self.get_model()
 
     @abc.abstractmethod
-    def get_model(self):
+    def get_model(self) -> Model:
         pass
 
-    def db_save(self, model=None):
-        db.session.add(model)
-        db.session.commit()
+    def db_save(self, model: Model) -> None:
+        self._db.session.add(model)
+        self._db.session.commit()
 
-    def db_delete(self, model):
-        db.session.delete(model)
-        db.session.commit()
+    def db_delete(self, model: Model) -> None:
+        self._db.session.delete(model)
+        self._db.session.commit()
 
-    def add(self, data):
-        user = self._model(data)
-        self.db_save(user)
-        return user
+    def add(self, data: Dict[str, Any]) -> Model:
+        instance = self._model(**data)
+        self.db_save(instance)
+        return instance
 
     def all(
         self,
-        order_column='created_at',
-        order='desc',
-        paginate=False,
-        page=1,
-        per_page=15):
+        order_column: str = 'created_at',
+        order: str = 'desc',
+        paginate: bool = False,
+        page: int = 1,
+        per_page: int = 15
+    ) -> Any:
         column = getattr(self._model, order_column)
         order_by = getattr(column, order)
-        q = self._model.query.order_by(order_by())
-        return q.paginate(page, per_page=per_page) if paginate else q.all()
+        query = self._model.query.order_by(order_by())
+        if paginate:
+            return query.paginate(page, per_page=per_page)
+        return query.all()
 
-    def find(self, id, fail=True):
-        q = self._model.query.filter_by(id=id)
-        q.first()
+    def find(self, id: int, fail: bool = True) -> Optional[Model]:
+        instance = self._model.query.get(id)
+        if not instance and fail:
+            # Handle the error or raise an appropriate exception
+            raise Exception(f"Instance with ID {id} not found.")
+        return instance
 
-    def find_by_attr(self, column, value, fail=True):
-        q = self._model.query.filter_by(**{column: value})
-        return q.first_or_404() if fail else q.first()
+    def find_by_attr(
+        self,
+        column: str,
+        value: Any,
+        fail: bool = True
+    ) -> Optional[Model]:
+        query = self._model.query.filter(getattr(self._model, column) == value)
+        instance = query.first()
+        if not instance and fail:
+            raise Exception(f"No instance found with {column}={value}.")
+        return instance
 
-    def find_optional(self, filter, fail=True):
-        filters = [
-            getattr(self._model, key) == val for key,
-            val in filter.items()]
-        q = self._model.query.filter(or_(*filters))
-        return q.first_or_404() if fail else q.first()
+    def find_optional(self, filter: Dict[str, Any], fail: bool = True) -> Optional[Model]:
+        filters = [getattr(self._model, key) == val for key, val in filter.items()]
+        query = self._model.query.filter(or_(*filters))
+        instance = query.first()
+        if not instance and fail:
+            raise Exception(f"No instance found with the provided filter.")
+        return instance
 
-    def update(self, id, data, fail=True):
-        model = self.find(id, fail=fail)
-        if model is not None:
-            model.update(data)
-            model.updated_at = time.now()
-            self.db_save(model)
-        return model
+    def update(self, id: int, data: Dict[str, Any], fail: bool = True) -> Optional[Model]:
+        instance = self.find(id, fail=fail)
+        if instance:
+            instance.update(data)
+            instance.updated_at = time.now()
+            self.db_save(instance)
+        return instance
 
-    def delete(self, id, fail=True):
-        model = self.find(id, fail=fail)
-        if model is not None:
-            self.db_delete(model)
-        return model
+    def delete(self, id: int, fail: bool = True) -> Optional[Model]:
+        instance = self.find(id, fail=fail)
+        if instance:
+            self.db_delete(instance)
+        return instance
