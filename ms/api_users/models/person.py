@@ -7,7 +7,12 @@ from ms.db import db
 
 class Person(db.Model):
     __tablename__ = 'person'
-
+    _fillable = (
+        'name',
+        'profile_image',
+        'music',
+        'user_id',
+    )
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = db.Column(db.String(80), nullable=False)
     profile_image = db.Column(db.String(120), nullable=False)

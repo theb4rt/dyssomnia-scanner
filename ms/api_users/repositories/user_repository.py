@@ -1,8 +1,11 @@
 from ms.api_users.models.user import User
 from ms.repositories import Repository
+from ms.db import db
 
 
 class UserRepository(Repository):
+    def __init__(self):
+        super().__init__()
 
     def get_model(self):
         return User

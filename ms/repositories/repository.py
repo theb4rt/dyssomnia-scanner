@@ -8,15 +8,15 @@ from typing import Any, Dict, Optional
 
 
 class Repository(abc.ABC):
-    def __init__(self, db: SQLAlchemy) -> None:
-        self._db = db
+    def __init__(self) -> None:
         self._model = self.get_model()
+        self._db = db
 
     @abc.abstractmethod
-    def get_model(self) -> Model:
+    def get_model(self) -> None:
         pass
 
-    def db_save(self, model: Model) -> None:
+    def db_save(self, model: Model = None) -> None:
         self._db.session.add(model)
         self._db.session.commit()
 
@@ -25,7 +25,7 @@ class Repository(abc.ABC):
         self._db.session.commit()
 
     def add(self, data: Dict[str, Any]) -> Model:
-        instance = self._model(**data)
+        instance = self._model()
         self.db_save(instance)
         return instance
 

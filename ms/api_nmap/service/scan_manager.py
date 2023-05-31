@@ -11,7 +11,7 @@ import xmltodict
 import json
 
 from ms import app
-from ms.api_nmap.service.utils.logger import error_logger, info_logger
+from ms.utils.logger import info_logger, error_logger
 
 
 class ScanManager:
@@ -81,6 +81,7 @@ class ScanManager:
 
             info_logger.info(json.loads(json.dumps(ports)))
         except KeyError:
+            pass
             error_logger.error("No ports found for host: {0}".format(self.ip))
         return ports
 

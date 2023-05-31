@@ -11,6 +11,8 @@ class Model(BaseModel):
         for key, value in data.items():
             if key in self._fillable:
                 setattr(self, key, value)
+            else:
+                raise AttributeError(f"Attribute '{key}' does not exist in the model.")
 
     def update(self, data: dict) -> None:
         self.set_attributes(data)

@@ -1,9 +1,9 @@
 from flask import abort
 from ms.helpers.jwt_config import JwtHelper
 from .middleware import Middleware
-from ms.middlewares.roleMiddleware import RoleMiddleware
-from ..api_nmap.service.utils.logger import error_logger
+
 from ..api_users.repositories import UserRepository
+from ..utils import error_logger
 
 
 class AuthMiddleware(Middleware):

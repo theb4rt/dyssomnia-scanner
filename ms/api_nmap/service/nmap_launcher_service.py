@@ -4,13 +4,13 @@ Created on 2/15/23
 @author: b4rt
 @mail: root.b4rt@gmail.com
 """
-from flask_restful import Resource, Api
+from flask_restful import Resource
 
 from ms.api_nmap.schema import NmapScanSchema
 from ms.api_nmap.service.scan_manager import ScanManager
-from ms.api_nmap.service.utils.logger import error_logger
 from ms.helpers.response import response_error, response_ok
 from ms.helpers.schema_validator import is_valid
+from ms.utils import error_logger
 
 
 class NmapLauncherService(Resource):
