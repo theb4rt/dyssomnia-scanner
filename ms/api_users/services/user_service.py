@@ -8,7 +8,6 @@ import bcrypt
 
 from ..repositories import UserRepository
 from ..schema.login_schema import LoginSchema, RegisterSchema
-from ms.helpers.schema_validator import is_valid
 from ms.services.service import BaseService
 from ..serializers import RegisterSerializer, LoginSerializer
 from ...helpers.jwt_config import JwtHelper
@@ -20,22 +19,8 @@ class UserService(BaseService):
         super().__init__()
         self.user_repo = UserRepository()
 
-    def _is_valid_user_data(self, user_data: dict) -> Tuple[bool, Dict[str, Any]]:
-        if user_data is None:
-            return False, {"error": "Invalid Json"}
-
-        login_schema = LoginSchema()
-        return is_valid(login_schema, user_data)
-
-    def _is_valid_user_register(self, user_data: dict) -> Tuple[bool, Dict[str, Any]]:
-        if user_data is None:
-            return False, {"error": "Invalid Json"}
-
-        register_schema = RegisterSchema()
-        return is_valid(register_schema, user_data)
-
     def register_user(self, user_data: dict) -> Dict[str, Any]:
-        status, result = self._is_valid_user_data(user_data)
+        status, result = self._is_valid_data(LoginSchema(), user_data)
 
         hashed_password = self._hash_password(user_data["password"])
         result['password'] = hashed_password
@@ -57,7 +42,7 @@ class UserService(BaseService):
             return self.response_error(message="Please contact an administrator")
 
     def login_user(self, user_data: dict) -> Dict[str, Any]:
-        status, result = self._is_valid_user_register(user_data)
+        status, result = self._is_valid_data(RegisterSchema(), user_data)
 
         if not status:
             return self.response_error(data=result, code=400)

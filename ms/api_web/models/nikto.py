@@ -30,8 +30,6 @@ class NiktoScanResults(db.Model):
     potential_vulnerabilities = db.Column(TEXT)
     scan_duration = db.Column(db.String(255))
     items = db.Column(MutableList.as_mutable(JSONB))
-
-
     scan_full_report = db.Column(db.JSON)
     scan_items_found = db.Column(db.Integer)
 
@@ -39,5 +37,5 @@ class NiktoScanResults(db.Model):
         if data is not None:
             self.set_attributes(data)
 
-    # def __repr__(self):
-    #     return f"<NiktoScanResults(id={self.id}, target_url={self.target_url}, ip_address={self.ip_address})>"
+    def __repr__(self):
+        return f"<NiktoScanResults(id={self.id}, target_url={self.target_url}, ip_address={self.ip_address})>"

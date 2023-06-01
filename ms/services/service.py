@@ -1,5 +1,8 @@
+from flask_marshmallow import Schema
+
+from ms.helpers import is_valid_data
 from ms.helpers.response import response_ok, response_error
-from typing import Dict, Any
+from typing import Dict, Any, Tuple, Union
 
 from ms.utils.logger import error_logger, info_logger
 
@@ -15,6 +18,7 @@ class BaseService:
         self._response_ok = response_ok
         self._error_logger = error_logger
         self._info_logger = info_logger
+        self._is_valid_data = is_valid_data
 
     @classmethod
     def action(cls, method: str, *args, **kwargs) -> Any:

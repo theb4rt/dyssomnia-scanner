@@ -6,7 +6,6 @@ from typing import Optional, Tuple, Union, Any
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import FlushError
 
-from ms.helpers.schema_validator import is_valid
 from ms.services.service import BaseService
 from ..repositories.nikto_repository import NiktoRepository
 from ..schema import NiktoSchema
@@ -46,16 +45,10 @@ class NiktoService(BaseService):
         result = asyncio.run(self.run_nikto())
         return self.response_ok(message="Nikto Running", code=200)
 
-    @property
-    def _is_valid_data(self) -> Tuple[bool, Union[str, dict]]:
-        if self.data is None:
-            return False, {"error": "Invalid Json"}
-        schema = NiktoSchema()
-        return is_valid(schema, self.data)
-
     def process_data(self):
-        status, result = self._is_valid_data
+        status, result = self._is_valid_data(NiktoSchema(), self.data)
         if not status:
+            self._error_logger.error(f"Invalid data: {result}")
             return self.response_error(data=result, code=400)
         self._info_logger.info(f"Processing data for {self.data['host']}")
 
@@ -76,9 +69,9 @@ class NiktoService(BaseService):
             "target_url": target_url,
             "ip_address": ip_address,
             "server_banner": target_banner,
-            #"end_time": end_time,
+            # "end_time": end_time,
             "scan_duration": time_elapsed,
-            #"scan_date": scan_date,
+            # "scan_date": scan_date,
             "items": scan_items_json,
             "scan_items_found": scan_items_found,
             "scan_full_report": result,
@@ -86,9 +79,7 @@ class NiktoService(BaseService):
         }
 
         try:
-
             self.nikto_repo.add(final_data)
-
             return self.response_ok(data=final_data, code=200)
         except IntegrityError as e:
             self._error_logger.error(f"Error saving data: {e}")
@@ -96,4 +87,3 @@ class NiktoService(BaseService):
         except FlushError as e:
             self._error_logger.error(f"Error saving data: {e}")
             return self.response_error(message="Please contact an administrator")
-

@@ -11,7 +11,6 @@ class NiktoController(Resource):
     def post(self):
         data = request.get_json(silent=True)
         self.nikto_service.data = data
-
         status, message, data, code = self.nikto_service.process_data().values()
 
         if status:
