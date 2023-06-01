@@ -14,11 +14,13 @@ class Person(db.Model):
         'user_id',
     )
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    name = db.Column(db.String(80), nullable=False)
-    profile_image = db.Column(db.String(120), nullable=False)
-    music = db.Column(db.String(120), nullable=False)
+    name = db.Column(db.String(80), nullable=False, default='anonymous')
+    profile_image = db.Column(db.String(120), nullable=True)
+    music = db.Column(db.String(120), nullable=True)
     user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('user.id'), nullable=False)
-    user = db.relationship('User', backref=db.backref('persons', lazy=True))
+    created_at = db.Column(db.DateTime, nullable=True, default=db.func.current_timestamp())
+    updated_at = db.Column(db.DateTime, nullable=True, default=db.func.current_timestamp(),
+                           onupdate=db.func.current_timestamp())
 
     def __repr__(self):
         return '<Person {}>'.format(self.name)

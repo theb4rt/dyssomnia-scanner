@@ -20,6 +20,13 @@ class User(db.Model):
     email = db.Column(db.String(120), index=True, unique=True)
     is_active = db.Column(db.Boolean, default=True)
     is_admin = db.Column(db.Boolean, default=False)
+    person = db.relationship('Person', backref='user', uselist=False)
+    nikto_scan_results = db.relationship('NiktoScanResults', backref='user', lazy=True)
+    created_at = db.Column(db.DateTime, nullable=True, default=db.func.current_timestamp())
+    updated_at = db.Column(db.DateTime, nullable=True, default=db.func.current_timestamp(),
+                           onupdate=db.func.current_timestamp())
+
+
 
     def __init__(self, data=None):
         if data is not None:

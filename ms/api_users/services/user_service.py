@@ -1,5 +1,6 @@
 import os
 import sys
+import traceback
 
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -20,29 +21,32 @@ class UserService(BaseService):
         self.user_repo = UserRepository()
 
     def register_user(self, user_data: dict) -> Dict[str, Any]:
-        status, result = self._is_valid_data(LoginSchema(), user_data)
-
-        hashed_password = self._hash_password(user_data["password"])
-        result['password'] = hashed_password
+        status, result = self._is_valid_data(RegisterSchema(), user_data)
         if not status:
             return self.response_error(data=result, code=400)
 
         try:
+            user_data = {
+                'username': result['username'],
+                'password': self._hash_password(result['password']),
+                'email': result['email']
+            }
+            person_data = {
+                'name': result.get('name', None)
+            }
 
-            user = self.user_repo.add(data=result)
-
-            if user is None:
+            user = self.user_repo.add_new_user(user_data=user_data, person_data=person_data)
+            if not user:
                 return self.response_error(message="Username is taken", code=400)
+
             serializer = RegisterSerializer(user)
             return self.response_ok(data=serializer.get_data(), message="User successfully registered", code=201)
-        except SQLAlchemyError as err:
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            print(exc_type, fname, exc_tb.tb_lineno)
-            return self.response_error(message="Please contact an administrator")
+        except Exception as err:
+            self._error_logger.error(traceback.format_exc())
+            return self.response_error(message="An unexpected error occurred", code=500)
 
     def login_user(self, user_data: dict) -> Dict[str, Any]:
-        status, result = self._is_valid_data(RegisterSchema(), user_data)
+        status, result = self._is_valid_data(LoginSchema(), user_data)
 
         if not status:
             return self.response_error(data=result, code=400)

@@ -32,6 +32,8 @@ class NiktoScanResults(db.Model):
     items = db.Column(MutableList.as_mutable(JSONB))
     scan_full_report = db.Column(db.JSON)
     scan_items_found = db.Column(db.Integer)
+    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('user.id'), nullable=False)
+
 
     def __init__(self, data=None):
         if data is not None:

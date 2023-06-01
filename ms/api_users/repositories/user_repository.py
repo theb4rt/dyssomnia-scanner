@@ -1,4 +1,7 @@
-from ms.api_users.models.user import User
+from sqlalchemy.exc import SQLAlchemyError
+
+from ms.api_users.models import User, Person
+
 from ms.repositories import Repository
 from ms.db import db
 
@@ -6,18 +9,22 @@ from ms.db import db
 class UserRepository(Repository):
     def __init__(self):
         super().__init__()
+        self.person_model = Person
 
     def get_model(self):
         return User
 
-    def add(self, data):
-        if self.check_unique_user(data['username'], data['email']):
-            user = self._model(data)
+    def add_new_user(self, user_data: dict, person_data: dict):
+        if self.check_unique_user(user_data['username'], user_data['email']):
+            user = self._model(user_data)
             user.is_active = True
             user.is_admin = False
-            self.db_save(user)
+            self.db_save(user, commit=False)
+            person = self.person_model(person_data)
+            user.person = person
+            self.db_save(person)
             return user
-        return None
+        return False
 
     def find_user(self, id):
         q = self._model.query.filter_by(id=id)

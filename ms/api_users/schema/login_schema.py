@@ -1,7 +1,5 @@
-import re
-
 from flask_marshmallow import Marshmallow
-from marshmallow import fields, validates
+from marshmallow import fields
 from marshmallow.validate import Length
 
 from ms import app
@@ -21,3 +19,4 @@ class RegisterSchema(ma.Schema):
     username = fields.String(required=True, allow_none=False, validate=Length(min=1, max=100))
     email = fields.Email(required=False, allow_none=False)
     password = fields.String(required=True, allow_none=False, validate=Length(min=1, max=100))
+    name = fields.String(required=False, allow_none=False, validate=Length(min=1, max=100))

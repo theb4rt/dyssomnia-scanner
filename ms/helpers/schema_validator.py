@@ -10,7 +10,6 @@ def is_valid_data(schema: Schema, data: Any) -> tuple[bool, dict[str, str]] | tu
     try:
         result = schema.load(data=data)
         return True, result
-
     except ValidationError as e:
         return False, list(e.args)
     except ValueError as e:

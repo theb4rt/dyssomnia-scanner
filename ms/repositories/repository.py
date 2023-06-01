@@ -2,9 +2,12 @@ import abc
 
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import or_
+from sqlalchemy.exc import SQLAlchemyError
+
 from ms.db import db, Model
 from ms.helpers import time
 from typing import Any, Dict, Optional
+from ms.utils.logger import error_logger, info_logger
 
 
 class Repository(abc.ABC):
@@ -16,13 +19,25 @@ class Repository(abc.ABC):
     def get_model(self) -> None:
         pass
 
-    def db_save(self, model: Model = None) -> None:
-        self._db.session.add(model)
-        self._db.session.commit()
+    def db_save(self, model: Model = None, commit: bool = True) -> None:
+        try:
+            self._db.session.add(model)
+            if commit:
+                self._db.session.commit()
+        except SQLAlchemyError as e:
+            self._db.session.rollback()
+            error_logger.error(e)
+            raise e
 
-    def db_delete(self, model: Model) -> None:
-        self._db.session.delete(model)
-        self._db.session.commit()
+    def db_delete(self, model: Model = None, commit: bool = True) -> None:
+        try:
+            self._db.session.delete(model)
+            if commit:
+                self._db.session.commit()
+        except SQLAlchemyError as e:
+            self._db.session.rollback()
+            error_logger.error(e)
+            raise e
 
     def add(self, data: Dict[str, Any]) -> Model:
         instance = self._model()
