@@ -18,7 +18,9 @@ class NiktoScanResults(db.Model):
                  'scan_duration',
                  'items',
                  'scan_full_report',
-                 'scan_items_found']
+                 'scan_items_found',
+                 'user_id'
+                 ]
 
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     scan_date = db.Column(db.DateTime, default=db.func.current_timestamp())
@@ -33,7 +35,6 @@ class NiktoScanResults(db.Model):
     scan_full_report = db.Column(db.JSON)
     scan_items_found = db.Column(db.Integer)
     user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('user.id'), nullable=False)
-
 
     def __init__(self, data=None):
         if data is not None:

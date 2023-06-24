@@ -44,3 +44,4 @@ class NiktoScanSchema(ma.Schema):
 class NiktoSchema(ma.Schema):
     host = fields.URL(required=True, allow_none=False)
     niktoscan = fields.Nested(NiktoScanSchema, required=True)
+    user_id = fields.UUID(required=True, allow_none=False)

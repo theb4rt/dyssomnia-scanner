@@ -9,6 +9,7 @@ from sqlalchemy.orm.exc import FlushError
 from ms.services.service import BaseService
 from ..repositories.nikto_repository import NiktoRepository
 from ..schema import NiktoSchema
+from ..serializers import NiktoSerializer
 from ...utils import nikto_logger
 
 
@@ -52,6 +53,8 @@ class NiktoService(BaseService):
             return self.response_error(data=result, code=400)
         self._info_logger.info(f"Processing data for {self.data['host']}")
 
+        user_id = str(self.data['user_id'])
+
         scan_details = result['niktoscan']['scandetails']
         niktoscan_general = result['niktoscan']['dollar']
         statistics = scan_details[0]['statistics'][0]
@@ -75,12 +78,14 @@ class NiktoService(BaseService):
             "items": scan_items_json,
             "scan_items_found": scan_items_found,
             "scan_full_report": result,
+            "user_id": user_id
 
         }
 
         try:
-            self.nikto_repo.add(final_data)
-            return self.response_ok(data=final_data, code=200)
+            data = self.nikto_repo.add(final_data)
+            serializer = NiktoSerializer(data, paginate=False)
+            return self.response_ok(data=serializer.get_data(), code=200)
         except IntegrityError as e:
             self._error_logger.error(f"Error saving data: {e}")
             return self.response_error(message="Please contact an administrator")

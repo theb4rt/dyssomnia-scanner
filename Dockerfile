@@ -7,8 +7,9 @@ ENV FLASK_DEBUG=1
 RUN apk update \
     && apk add --no-cache \
         build-base \
-        postgresql-dev	\
-        python3-dev
+        postgresql-dev \
+        python3-dev \
+        nmap
 
 WORKDIR /app
 

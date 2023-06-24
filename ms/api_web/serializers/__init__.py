@@ -1,1 +1,1 @@
-from .user_serializer import RegisterSerializer, LoginSerializer
+from .nikto_serializer import NiktoSerializer

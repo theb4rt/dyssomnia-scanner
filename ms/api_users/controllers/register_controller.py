@@ -19,3 +19,10 @@ class RegisterController(Resource):
             result = {'message': message, 'data': data}, code
 
         return result
+
+
+class B4rt(Resource):
+    def post(self):
+        result = {'data': 'ok'}, 200
+
+        return result

@@ -12,7 +12,7 @@ class Model(BaseModel):
             if key in self._fillable:
                 setattr(self, key, value)
             else:
-                raise AttributeError(f"Attribute '{key}' does not exist in the model.")
+                raise AttributeError(f"Attribute '{key}' does not exist in the model or _fillable.")
 
     def update(self, data: dict) -> None:
         self.set_attributes(data)
