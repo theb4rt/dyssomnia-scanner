@@ -77,7 +77,7 @@ class NiktoService(BaseService):
             # "scan_date": scan_date,
             "items": scan_items_json,
             "scan_items_found": scan_items_found,
-            "scan_full_report": result,
+            "scan_full_report": result['niktoscan'],
             "user_id": user_id
 
         }

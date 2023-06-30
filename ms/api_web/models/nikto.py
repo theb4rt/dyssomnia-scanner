@@ -41,4 +41,6 @@ class NiktoScanResults(db.Model):
             self.set_attributes(data)
 
     def __repr__(self):
-        return f"<NiktoScanResults(id={self.id}, target_url={self.target_url}, ip_address={self.ip_address})>"
+        return f"<NiktoScanResults(id={self.id}, target_url={self.target_url}, ip_address={self.ip_address})>, " \
+               f"server_banner={self.server_banner}, " \
+               f"user_id={self.user_id}, "
